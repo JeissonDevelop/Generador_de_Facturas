@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useRef, useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { generatePDF } from "@/lib/generate-pdf"
-import { Download, Plus, Trash2 } from "lucide-react"
+import { useRef, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { generatePDF } from "@/lib/generate-pdf";
+import { Download, Plus, Trash2 } from "lucide-react";
 
 interface InvoiceItem {
-  concepto: string
-  cantidad: string
-  precioUnitario: string
+  concepto: string;
+  cantidad: string;
+  precioUnitario: string;
 }
 
 export function InvoiceWinicar() {
-  const invoiceRef = useRef<HTMLDivElement>(null)
-  const [loading, setLoading] = useState(false)
+  const invoiceRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     nFactura: "",
@@ -26,67 +26,77 @@ export function InvoiceWinicar() {
     telefono: "",
     matricula: "",
     descripcionVehiculo: "",
-  })
+  });
 
   const [items, setItems] = useState<InvoiceItem[]>([
     { concepto: "", cantidad: "1", precioUnitario: "" },
-  ])
+  ]);
 
   const updateField = (field: string, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }))
-  }
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const updateItem = (index: number, field: keyof InvoiceItem, value: string) => {
+  const updateItem = (
+    index: number,
+    field: keyof InvoiceItem,
+    value: string,
+  ) => {
     setItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
-    )
-  }
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+    );
+  };
 
   const addItem = () => {
-    setItems((prev) => [...prev, { concepto: "", cantidad: "1", precioUnitario: "" }])
-  }
+    setItems((prev) => [
+      ...prev,
+      { concepto: "", cantidad: "1", precioUnitario: "" },
+    ]);
+  };
 
   const removeItem = (index: number) => {
     if (items.length > 1) {
-      setItems((prev) => prev.filter((_, i) => i !== index))
+      setItems((prev) => prev.filter((_, i) => i !== index));
     }
-  }
+  };
 
   const parseNum = (v: string) => {
     // Acepta coma como decimal: "1.234,56" -> 1234.56
-    const cleaned = v.replace(/\./g, "").replace(",", ".")
-    const n = parseFloat(cleaned)
-    return isNaN(n) ? 0 : n
-  }
+    const cleaned = v.replace(/\./g, "").replace(",", ".");
+    const n = parseFloat(cleaned);
+    return isNaN(n) ? 0 : n;
+  };
 
   const getItemTotal = (item: InvoiceItem) => {
-    return parseNum(item.cantidad) * parseNum(item.precioUnitario)
-  }
+    return parseNum(item.cantidad) * parseNum(item.precioUnitario);
+  };
 
-  const subtotal = items.reduce((sum, item) => sum + getItemTotal(item), 0)
-  const ivaAmount = subtotal * 0.21
-  const totalFinal = subtotal + ivaAmount
+  const subtotal = items.reduce((sum, item) => sum + getItemTotal(item), 0);
+  const ivaAmount = subtotal * 0.21;
+  const totalFinal = subtotal + ivaAmount;
 
   const formatEur = (n: number) => {
-    if (n === 0) return "0,00"
-    return n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  }
+    if (n === 0) return "0,00";
+    return n.toLocaleString("es-ES", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
 
   const handleDownload = async () => {
-    if (!invoiceRef.current) return
-    setLoading(true)
+    if (!invoiceRef.current) return;
+    setLoading(true);
     try {
       await generatePDF(
         invoiceRef.current,
-        `factura-winicar-${form.nFactura || "sin-numero"}`
-      )
+        `factura-winicar-${form.nFactura || "sin-numero"}`,
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const GREEN = "#1a7a4c"
-  const GREEN_LIGHT = "#e8f5ee"
+  const GREEN = "#1a7a4c";
+  const GREEN_LIGHT = "#e8f5ee";
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row">
@@ -167,7 +177,9 @@ export function InvoiceWinicar() {
                 id="w-vehiculo"
                 placeholder="Marca y modelo"
                 value={form.descripcionVehiculo}
-                onChange={(e) => updateField("descripcionVehiculo", e.target.value)}
+                onChange={(e) =>
+                  updateField("descripcionVehiculo", e.target.value)
+                }
               />
             </div>
           </div>
@@ -175,7 +187,12 @@ export function InvoiceWinicar() {
           <div className="mt-2 border-t pt-3">
             <div className="mb-2 flex items-center justify-between">
               <Label>Conceptos</Label>
-              <Button type="button" variant="outline" size="sm" onClick={addItem}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addItem}
+              >
                 <Plus className="size-3.5" />
                 Agregar
               </Button>
@@ -201,18 +218,24 @@ export function InvoiceWinicar() {
                   <Input
                     placeholder="Concepto"
                     value={item.concepto}
-                    onChange={(e) => updateItem(idx, "concepto", e.target.value)}
+                    onChange={(e) =>
+                      updateItem(idx, "concepto", e.target.value)
+                    }
                   />
                   <div className="flex gap-2">
                     <Input
                       placeholder="Cantidad"
                       value={item.cantidad}
-                      onChange={(e) => updateItem(idx, "cantidad", e.target.value)}
+                      onChange={(e) =>
+                        updateItem(idx, "cantidad", e.target.value)
+                      }
                     />
                     <Input
                       placeholder="Precio unit."
                       value={item.precioUnitario}
-                      onChange={(e) => updateItem(idx, "precioUnitario", e.target.value)}
+                      onChange={(e) =>
+                        updateItem(idx, "precioUnitario", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -221,20 +244,30 @@ export function InvoiceWinicar() {
             <div className="mt-2 flex flex-col gap-1 border-t pt-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal:</span>
-                <span className="text-foreground">{formatEur(subtotal)} {"\u20AC"}</span>
+                <span className="text-foreground">
+                  {formatEur(subtotal)} {"\u20AC"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">IVA (21%):</span>
-                <span className="text-foreground">{formatEur(ivaAmount)} {"\u20AC"}</span>
+                <span className="text-foreground">
+                  {formatEur(ivaAmount)} {"\u20AC"}
+                </span>
               </div>
               <div className="flex justify-between font-bold">
                 <span className="text-foreground">Total:</span>
-                <span className="text-foreground">{formatEur(totalFinal)} {"\u20AC"}</span>
+                <span className="text-foreground">
+                  {formatEur(totalFinal)} {"\u20AC"}
+                </span>
               </div>
             </div>
           </div>
 
-          <Button onClick={handleDownload} disabled={loading} className="mt-2 w-full">
+          <Button
+            onClick={handleDownload}
+            disabled={loading}
+            className="mt-2 w-full"
+          >
             <Download className="size-4" />
             {loading ? "Generando..." : "Descargar Factura PDF"}
           </Button>
@@ -243,7 +276,9 @@ export function InvoiceWinicar() {
 
       {/* Vista previa */}
       <div className="flex-1 overflow-auto">
-        <p className="mb-2 text-xs font-medium text-muted-foreground">Vista previa</p>
+        <p className="mb-2 text-xs font-medium text-muted-foreground">
+          Vista previa
+        </p>
         <div className="rounded-lg border bg-background shadow-sm">
           <div
             ref={invoiceRef}
@@ -263,7 +298,7 @@ export function InvoiceWinicar() {
               <div className="mb-6 flex items-start justify-between">
                 <div>
                   <p className="text-xl font-bold" style={{ color: GREEN }}>
-                    WINICAR ESPANA
+                    WINICAR ESPAÑA
                   </p>
                   <p className="mt-1 text-xs text-[#555555]">
                     Soluciones del sector automotriz
@@ -275,7 +310,8 @@ export function InvoiceWinicar() {
                   </p>
                   <div className="mt-2 text-xs text-[#000000]">
                     <p>
-                      <span className="font-bold">N.:</span> {form.nFactura || "___"}
+                      <span className="font-bold">N.:</span>{" "}
+                      {form.nFactura || "___"}
                     </p>
                     <p>
                       <span className="font-bold">Fecha:</span> {form.fecha}
@@ -285,7 +321,10 @@ export function InvoiceWinicar() {
               </div>
 
               {/* Linea separadora */}
-              <div className="mb-6" style={{ borderBottom: `2px solid ${GREEN}` }} />
+              <div
+                className="mb-6"
+                style={{ borderBottom: `2px solid ${GREEN}` }}
+              />
 
               {/* Datos del cliente */}
               <div className="mb-6 flex gap-8">
@@ -296,7 +335,10 @@ export function InvoiceWinicar() {
                   >
                     Datos del cliente
                   </p>
-                  <div className="rounded text-xs text-[#000000]" style={{ backgroundColor: GREEN_LIGHT, padding: "12px" }}>
+                  <div
+                    className="rounded text-xs text-[#000000]"
+                    style={{ backgroundColor: GREEN_LIGHT, padding: "12px" }}
+                  >
                     <p className="mb-1">
                       <span className="font-bold">Cliente: </span>
                       {form.cliente}
@@ -322,7 +364,10 @@ export function InvoiceWinicar() {
                   >
                     Datos del vehiculo
                   </p>
-                  <div className="rounded text-xs text-[#000000]" style={{ backgroundColor: GREEN_LIGHT, padding: "12px" }}>
+                  <div
+                    className="rounded text-xs text-[#000000]"
+                    style={{ backgroundColor: GREEN_LIGHT, padding: "12px" }}
+                  >
                     <p className="mb-1">
                       <span className="font-bold">Matricula: </span>
                       {form.matricula}
@@ -370,12 +415,13 @@ export function InvoiceWinicar() {
                 </thead>
                 <tbody>
                   {items.map((item, idx) => {
-                    const itemTotal = getItemTotal(item)
+                    const itemTotal = getItemTotal(item);
                     return (
                       <tr
                         key={idx}
                         style={{
-                          backgroundColor: idx % 2 === 0 ? "#ffffff" : GREEN_LIGHT,
+                          backgroundColor:
+                            idx % 2 === 0 ? "#ffffff" : GREEN_LIGHT,
                         }}
                       >
                         <td className="border-b border-[#e0e0e0] px-3 py-3 text-[#000000]">
@@ -390,10 +436,12 @@ export function InvoiceWinicar() {
                             : ""}
                         </td>
                         <td className="border-b border-[#e0e0e0] px-3 py-3 text-right font-medium text-[#000000]">
-                          {itemTotal > 0 ? `${formatEur(itemTotal)} \u20AC` : ""}
+                          {itemTotal > 0
+                            ? `${formatEur(itemTotal)} \u20AC`
+                            : ""}
                         </td>
                       </tr>
-                    )
+                    );
                   })}
                   {/* Filas vacias de relleno */}
                   {items.length < 4 &&
@@ -402,7 +450,9 @@ export function InvoiceWinicar() {
                         key={`empty-${idx}`}
                         style={{
                           backgroundColor:
-                            (items.length + idx) % 2 === 0 ? "#ffffff" : GREEN_LIGHT,
+                            (items.length + idx) % 2 === 0
+                              ? "#ffffff"
+                              : GREEN_LIGHT,
                         }}
                       >
                         <td className="border-b border-[#e0e0e0] px-3 py-3 text-[#000000]" />
@@ -419,18 +469,24 @@ export function InvoiceWinicar() {
                 <div className="w-64">
                   <div className="flex justify-between border-b border-[#e0e0e0] px-3 py-2 text-xs text-[#000000]">
                     <span className="font-medium">Subtotal</span>
-                    <span>{formatEur(subtotal)} {"\u20AC"}</span>
+                    <span>
+                      {formatEur(subtotal)} {"\u20AC"}
+                    </span>
                   </div>
                   <div className="flex justify-between border-b border-[#e0e0e0] px-3 py-2 text-xs text-[#000000]">
                     <span className="font-medium">IVA (21%)</span>
-                    <span>{formatEur(ivaAmount)} {"\u20AC"}</span>
+                    <span>
+                      {formatEur(ivaAmount)} {"\u20AC"}
+                    </span>
                   </div>
                   <div
                     className="flex justify-between px-3 py-2 text-sm font-bold text-[#ffffff]"
                     style={{ backgroundColor: GREEN }}
                   >
                     <span>TOTAL</span>
-                    <span>{formatEur(totalFinal)} {"\u20AC"}</span>
+                    <span>
+                      {formatEur(totalFinal)} {"\u20AC"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -438,7 +494,7 @@ export function InvoiceWinicar() {
               {/* Pie de pagina */}
               <div className="mt-20 border-t border-[#e0e0e0] pt-4 text-center text-[8px] text-[#888888]">
                 <p className="font-bold" style={{ color: GREEN }}>
-                  WINICAR ESPANA
+                  WINICAR ESPAÑA
                 </p>
                 <p>Gracias por confiar en nuestros servicios</p>
               </div>
@@ -456,5 +512,5 @@ export function InvoiceWinicar() {
         </div>
       </div>
     </div>
-  )
+  );
 }

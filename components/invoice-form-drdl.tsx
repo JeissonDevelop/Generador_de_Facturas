@@ -268,13 +268,13 @@ export function InvoiceDrdl() {
                 <thead>
                   <tr>
                     <th
-                      className="border px-4 py-1.5 text-center align-middle font-bold text-[#ffffff]"
+                      className="border px-4 py-1 font-bold text-[#ffffff]"
                       style={{ backgroundColor: BLUE, borderColor: BLUE }}
                     >
                       N. DE FACTURA
                     </th>
                     <th
-                      className="border px-4 py-1.5 text-center align-middle font-bold text-[#ffffff]"
+                      className="border px-4 py-1 font-bold text-[#ffffff]"
                       style={{ backgroundColor: BLUE, borderColor: BLUE }}
                     >
                       FECHA
@@ -283,10 +283,10 @@ export function InvoiceDrdl() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="border border-[#cccccc] px-4 py-1.5 text-center align-middle font-bold text-[#000000]">
+                    <td className="border border-[#cccccc] px-4 py-1 text-center font-bold text-[#000000]">
                       {form.nFactura}
                     </td>
-                    <td className="border border-[#cccccc] px-4 py-1.5 text-center align-middle text-[#000000]">
+                    <td className="border border-[#cccccc] px-4 py-1 text-center text-[#000000]">
                       {form.fecha}
                     </td>
                   </tr>
@@ -320,7 +320,7 @@ export function InvoiceDrdl() {
                   CLIENTE:
                 </span>
                 <span className="flex-1">{form.cliente}</span>
-                <span className="inline-flex h-5.5 w-32 items-center justify-center border border-[#cccccc] px-2 py-0.5 text-center font-bold leading-none">
+                <span className="w-32 border border-[#cccccc] px-2 py-0.5 text-center font-bold">
                   {form.idCliente}
                 </span>
               </div>
@@ -352,13 +352,13 @@ export function InvoiceDrdl() {
               <thead>
                 <tr>
                   <th
-                    className="border px-3 py-2 text-center align-middle font-bold text-[#ffffff]"
+                    className="border px-3 py-2 text-left font-bold text-[#ffffff]"
                     style={{ backgroundColor: BLUE, borderColor: BLUE }}
                   >
                     DESCRIPCION
                   </th>
                   <th
-                    className="border px-3 py-2 text-center align-middle font-bold text-[#ffffff]"
+                    className="border px-3 py-2 text-right font-bold text-[#ffffff]"
                     style={{
                       backgroundColor: BLUE,
                       borderColor: BLUE,
@@ -372,10 +372,10 @@ export function InvoiceDrdl() {
               <tbody>
                 {items.map((item, idx) => (
                   <tr key={idx}>
-                    <td className="border border-[#cccccc] px-3 py-2 text-center align-middle text-[#000000]">
+                    <td className="border border-[#cccccc] px-3 py-2 text-[#000000]">
                       {item.descripcion}
                     </td>
-                    <td className="border border-[#cccccc] px-3 py-2 text-center align-middle text-[#000000]">
+                    <td className="border border-[#cccccc] px-3 py-2 text-right text-[#000000]">
                       {parseNum(item.importe) > 0
                         ? formatEur(parseNum(item.importe))
                         : ""}
@@ -386,10 +386,10 @@ export function InvoiceDrdl() {
                 {items.length < 4 &&
                   Array.from({ length: 4 - items.length }).map((_, idx) => (
                     <tr key={`empty-${idx}`}>
-                      <td className="border border-[#cccccc] px-3 py-2 text-center align-middle text-[#000000]">
+                      <td className="border border-[#cccccc] px-3 py-2 text-[#000000]">
                         &nbsp;
                       </td>
-                      <td className="border border-[#cccccc] px-3 py-2 text-center align-middle text-[#000000]">
+                      <td className="border border-[#cccccc] px-3 py-2 text-[#000000]">
                         &nbsp;
                       </td>
                     </tr>
@@ -409,7 +409,7 @@ export function InvoiceDrdl() {
                 >
                   TOTAL
                 </span>
-                <span className="border border-[#cccccc] px-4 py-1.5 text-center text-sm font-bold text-[#000000]">
+                <span className="border border-[#cccccc] px-4 py-1.5 text-sm font-bold text-[#000000]">
                   {formatEur(total)} {"\u20AC"}
                 </span>
               </div>

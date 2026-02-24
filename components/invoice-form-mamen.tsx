@@ -1,32 +1,35 @@
-"use client"
+"use client";
 
-import { useRef, useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { generatePDF } from "@/lib/generate-pdf"
-import { Download, Plus, Trash2 } from "lucide-react"
+import { useRef, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { generatePDF } from "@/lib/generate-pdf";
+import { Download, Plus, Trash2 } from "lucide-react";
 
 function parseNum(v: string) {
-  const cleaned = v.replace(/\./g, "").replace(",", ".")
-  const n = parseFloat(cleaned)
-  return isNaN(n) ? 0 : n
+  const cleaned = v.replace(/\./g, "").replace(",", ".");
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : n;
 }
 
 function formatEur(n: number) {
-  if (n === 0) return ""
-  return n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  if (n === 0) return "";
+  return n.toLocaleString("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 interface InvoiceItem {
-  matricula: string
-  descripcion: string
-  total: string
+  matricula: string;
+  descripcion: string;
+  total: string;
 }
 
 export function InvoiceMamen() {
-  const invoiceRef = useRef<HTMLDivElement>(null)
-  const [loading, setLoading] = useState(false)
+  const invoiceRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     nFactura: "",
@@ -35,41 +38,51 @@ export function InvoiceMamen() {
     nifCifNie: "",
     direccion: "",
     telefonos: "",
-  })
+  });
 
   const [items, setItems] = useState<InvoiceItem[]>([
     { matricula: "", descripcion: "", total: "" },
-  ])
+  ]);
 
   const updateField = (field: string, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }))
-  }
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const updateItem = (index: number, field: keyof InvoiceItem, value: string) => {
+  const updateItem = (
+    index: number,
+    field: keyof InvoiceItem,
+    value: string,
+  ) => {
     setItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
-    )
-  }
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+    );
+  };
 
   const addItem = () => {
-    setItems((prev) => [...prev, { matricula: "", descripcion: "", total: "" }])
-  }
+    setItems((prev) => [
+      ...prev,
+      { matricula: "", descripcion: "", total: "" },
+    ]);
+  };
 
   const removeItem = (index: number) => {
     if (items.length > 1) {
-      setItems((prev) => prev.filter((_, i) => i !== index))
+      setItems((prev) => prev.filter((_, i) => i !== index));
     }
-  }
+  };
 
   const handleDownload = async () => {
-    if (!invoiceRef.current) return
-    setLoading(true)
+    if (!invoiceRef.current) return;
+    setLoading(true);
     try {
-      await generatePDF(invoiceRef.current, `factura-mamen-${form.nFactura || "sin-numero"}`)
+      await generatePDF(
+        invoiceRef.current,
+        `factura-mamen-${form.nFactura || "sin-numero"}`,
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row">
@@ -136,7 +149,12 @@ export function InvoiceMamen() {
           <div className="mt-2 border-t pt-3">
             <div className="mb-2 flex items-center justify-between">
               <Label>Items de factura</Label>
-              <Button type="button" variant="outline" size="sm" onClick={addItem}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addItem}
+              >
                 <Plus className="size-3.5" />
                 Agregar
               </Button>
@@ -162,12 +180,16 @@ export function InvoiceMamen() {
                   <Input
                     placeholder="Matricula"
                     value={item.matricula}
-                    onChange={(e) => updateItem(idx, "matricula", e.target.value)}
+                    onChange={(e) =>
+                      updateItem(idx, "matricula", e.target.value)
+                    }
                   />
                   <Input
                     placeholder="Descripcion"
                     value={item.descripcion}
-                    onChange={(e) => updateItem(idx, "descripcion", e.target.value)}
+                    onChange={(e) =>
+                      updateItem(idx, "descripcion", e.target.value)
+                    }
                   />
                   <Input
                     placeholder="Total (ej: 830,00)"
@@ -179,7 +201,11 @@ export function InvoiceMamen() {
             ))}
           </div>
 
-          <Button onClick={handleDownload} disabled={loading} className="mt-2 w-full">
+          <Button
+            onClick={handleDownload}
+            disabled={loading}
+            className="mt-2 w-full"
+          >
             <Download className="size-4" />
             {loading ? "Generando..." : "Descargar Factura PDF"}
           </Button>
@@ -188,12 +214,18 @@ export function InvoiceMamen() {
 
       {/* Vista previa */}
       <div className="flex-1 overflow-auto">
-        <p className="mb-2 text-xs font-medium text-muted-foreground">Vista previa</p>
+        <p className="mb-2 text-xs font-medium text-muted-foreground">
+          Vista previa
+        </p>
         <div className="rounded-lg border bg-background shadow-sm">
           <div
             ref={invoiceRef}
             className="mx-auto bg-[#ffffff] p-10 text-[#000000]"
-            style={{ width: "210mm", minHeight: "297mm", fontFamily: "Arial, sans-serif" }}
+            style={{
+              width: "210mm",
+              minHeight: "297mm",
+              fontFamily: "Arial, sans-serif",
+            }}
           >
             {/* Encabezado empresa */}
             <div className="mb-1 text-center">
@@ -206,7 +238,9 @@ export function InvoiceMamen() {
               <p className="mt-0.5 inline-block border border-[#000000] px-3 py-0.5 text-xs text-[#000000]">
                 MADRID, 28808
               </p>
-              <p className="mt-1 text-xs font-bold text-[#000000]">CIF B75888770</p>
+              <p className="mt-1 text-xs font-bold text-[#000000]">
+                CIF B75888770
+              </p>
             </div>
 
             {/* Numero factura */}
@@ -217,7 +251,10 @@ export function InvoiceMamen() {
             </div>
 
             {/* Datos del cliente */}
-            <table className="mb-6 w-full text-xs" style={{ borderCollapse: "collapse" }}>
+            <table
+              className="mb-6 w-full text-xs"
+              style={{ borderCollapse: "collapse" }}
+            >
               <tbody>
                 <tr>
                   <td className="w-20 border border-[#000000] bg-[#f0f0f0] px-2 py-1.5 font-bold text-[#000000]">
@@ -243,7 +280,10 @@ export function InvoiceMamen() {
                   <td className="border border-[#000000] bg-[#f0f0f0] px-2 py-1.5 font-bold text-[#000000]">
                     Direccion:
                   </td>
-                  <td colSpan={2} className="border border-[#000000] px-2 py-1.5 text-[#000000]">
+                  <td
+                    colSpan={2}
+                    className="border border-[#000000] px-2 py-1.5 text-[#000000]"
+                  >
                     {form.direccion || ""}
                   </td>
                 </tr>
@@ -251,7 +291,10 @@ export function InvoiceMamen() {
                   <td className="border border-[#000000] bg-[#f0f0f0] px-2 py-1.5 font-bold text-[#000000]">
                     Telefonos:
                   </td>
-                  <td colSpan={2} className="border border-[#000000] px-2 py-1.5 text-[#000000]">
+                  <td
+                    colSpan={2}
+                    className="border border-[#000000] px-2 py-1.5 text-[#000000]"
+                  >
                     {form.telefonos || ""}
                   </td>
                 </tr>
@@ -259,16 +302,25 @@ export function InvoiceMamen() {
             </table>
 
             {/* Tabla de items */}
-            <table className="mb-6 w-full text-xs" style={{ borderCollapse: "collapse" }}>
+            <table
+              className="mb-6 w-full text-xs"
+              style={{ borderCollapse: "collapse" }}
+            >
               <thead>
                 <tr className="bg-[#4a4a4a] text-[#ffffff]">
-                  <th className="border border-[#000000] px-2 py-1.5 text-left font-bold" style={{ width: "100px" }}>
+                  <th
+                    className="border border-[#000000] px-2 py-1.5 text-left font-bold"
+                    style={{ width: "100px" }}
+                  >
                     MATRICULA
                   </th>
                   <th className="border border-[#000000] px-3 py-1.5 text-center font-bold">
                     DESCRIPCION
                   </th>
-                  <th className="border border-[#000000] px-3 py-1.5 text-right font-bold" style={{ width: "100px" }}>
+                  <th
+                    className="border border-[#000000] px-3 py-1.5 text-right font-bold"
+                    style={{ width: "100px" }}
+                  >
                     TOTAL
                   </th>
                 </tr>
@@ -283,7 +335,9 @@ export function InvoiceMamen() {
                       {item.descripcion}
                     </td>
                     <td className="border border-[#000000] px-3 py-3 text-right text-[#000000]">
-                      {parseNum(item.total) > 0 ? `${formatEur(parseNum(item.total))} \u20AC` : ""}
+                      {parseNum(item.total) > 0
+                        ? `${formatEur(parseNum(item.total))} \u20AC`
+                        : ""}
                     </td>
                   </tr>
                 ))}
@@ -302,8 +356,8 @@ export function InvoiceMamen() {
             {/* Nota legal REBU */}
             <div className="mb-16 max-w-[60%] text-[9px] leading-tight text-[#000000]">
               <p>
-                OPERACION SUJETA A REBU SEGUN ARTICULO 137 Y 138 DE LA LEY 37/1992
-                DE 28 DE DICIEMBRE
+                OPERACION SUJETA A REBU SEGUN ARTICULO 137 Y 138 DE LA LEY
+                37/1992 DE 28 DE DICIEMBRE
               </p>
             </div>
 
@@ -315,7 +369,10 @@ export function InvoiceMamen() {
                 <p>Centro Comercial, Los Pinos local 13</p>
                 <p>Alcala de Henares</p>
                 <p>28813 MADRID</p>
-                <div className="my-4 border-b border-[#000000]" style={{ width: "180px" }} />
+                <div
+                  className="my-4 border-b border-[#000000]"
+                  style={{ width: "180px" }}
+                />
                 <p className="text-[10px]">Maria del Carmen Valverde Sanchez</p>
                 <p className="mt-1 text-[10px]">DNI 02650342Y</p>
               </div>
@@ -324,5 +381,5 @@ export function InvoiceMamen() {
         </div>
       </div>
     </div>
-  )
+  );
 }
